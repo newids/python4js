@@ -8,19 +8,26 @@
 
 딥러닝은 AICE Associate 실기의 마지막 관문입니다. 다행히 Keras는 17장의 scikit-learn과 **정신 모델이 같습니다**: 모델을 만들고(구성) → 설정하고(compile) → 학습하고(fit) → 평가한다(evaluate). 층(layer)을 순서대로 쌓는 것은 함수를 합성하거나 미들웨어를 체이닝하던 감각과 비슷합니다. 새로 외울 것은 "층의 종류와 compile 인자"뿐입니다.
 
-> 📦 **설치 안내**: 이 챕터의 코드는 실행 환경에 TensorFlow/Keras가 없어 검증에서 제외됩니다. 로컬에서 실습하려면 다음을 설치하세요.
+> 📦 **설치 안내**: 이 챕터를 로컬에서 실습하려면 TensorFlow가 필요합니다(기본 파이썬 환경에는 없을 수 있습니다).
 > ```bash
 > pip install tensorflow
 > ```
-> `from tensorflow import keras`로 불러오며, 최신 Keras 3 기준으로 설명합니다.
+> `from tensorflow import keras`로 불러오며, 최신 Keras 3 기준으로 설명합니다. 예제는 재현성을 위해 시드를 고정하고, 책에서는 학습 시간을 줄이려 `epochs`를 작게(1~3) 두었습니다.
 
 ## 18.1 Sequential과 Dense — 층을 쌓기
 
 가장 기본 구조는 층을 **일렬로 쌓는** `Sequential`입니다. 각 `Dense`(완전연결층)는 뉴런 수와 활성화 함수를 받습니다. JS로 비유하면 입력을 순서대로 통과시키는 변환 파이프라인을 선언하는 것과 같습니다.
 
-```python no-run
+```python
+import os
+os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")   # TensorFlow 로그 최소화
+import numpy as np
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+
+np.random.seed(42)
+tf.random.set_seed(42)                        # 재현성 고정
 
 model = keras.Sequential([
     keras.Input(shape=(10,)),                 # 입력 특성 10개
@@ -28,7 +35,9 @@ model = keras.Sequential([
     layers.Dense(32, activation="relu"),      # 은닉층 32뉴런
     layers.Dense(1, activation="sigmoid"),    # 출력층: 이진분류
 ])
-model.summary()   # 층 구조와 파라미터 수 출력
+print(model.count_params())   # 전체 학습 파라미터 수
+# 출력: 2817
+model.summary()               # 층 구조와 파라미터 요약 출력
 ```
 
 **활성화 함수**는 층에 비선형성을 부여합니다. 은닉층에는 보통 `relu`, 출력층은 문제에 따라 다릅니다: 이진분류는 `sigmoid`(0~1 확률), 다중분류는 `softmax`(합이 1인 분포), 회귀는 활성화 없음(선형).
@@ -45,7 +54,7 @@ model.summary()   # 층 구조와 파라미터 수 출력
 
 모델의 뼈대를 만들었으면 **어떻게 학습할지**를 정합니다. 세 가지를 지정합니다: `optimizer`(가중치 갱신 방법, 보통 `"adam"`), `loss`(오차 정의), `metrics`(모니터링할 지표).
 
-```python no-run
+```python
 model.compile(
     optimizer="adam",
     loss="binary_crossentropy",     # 이진분류용 손실
@@ -72,20 +81,29 @@ model.compile(
 - `batch_size`: 한 번에 처리할 샘플 수(메모리·속도 조절)
 - `validation_split` 또는 `validation_data`: 학습 중 검증 성능 확인
 
-```python no-run
+```python
+# 실습용 소형 데이터 (200샘플 × 10특성, 0/1 이진 라벨)
+X_train = np.random.rand(200, 10).astype("float32")
+y_train = (X_train[:, 0] > 0.5).astype("int32")
+
 history = model.fit(
     X_train, y_train,
-    epochs=50,
+    epochs=3,                 # 책 실습용 축소 (실제로는 수십~수백)
     batch_size=32,
     validation_split=0.2,     # 학습 데이터의 20%를 검증에 사용
+    verbose=0,                # 진행 로그 생략
 )
+print(len(history.history["loss"]))   # 기록된 epoch 수
+# 출력: 3
 ```
 
 `fit`은 `history` 객체를 반환하며, `history.history`에 epoch별 손실·지표가 딕셔너리로 담깁니다. 16장의 학습곡선이 이 값을 그리는 것입니다.
 
-```python no-run
-print(history.history.keys())
-# dict_keys(['loss', 'accuracy', 'val_loss', 'val_accuracy'])
+```python
+print("val_loss" in history.history)   # 검증 손실이 기록되었는가
+# 출력: True
+print(sorted(history.history.keys()))  # 기록된 지표 이름들
+# 출력: ['accuracy', 'loss', 'val_accuracy', 'val_loss']
 ```
 
 > ⚠️ **함정**: `validation_split`은 학습 데이터의 **뒷부분을 순서대로** 떼어 검증에 씁니다. 데이터가 클래스별로 정렬돼 있으면 검증셋이 한 클래스로 쏠려 성능이 왜곡됩니다. 미리 섞여 있지 않다면 17장의 `train_test_split`으로 별도 검증셋을 만들어 `validation_data=(X_val, y_val)`로 넘기는 편이 안전합니다.
@@ -94,25 +112,32 @@ print(history.history.keys())
 
 **콜백**은 학습 도중 자동으로 개입하는 훅입니다(JS의 이벤트 콜백과 같은 발상). 두 가지가 필수입니다. `EarlyStopping`은 검증 성능이 나아지지 않으면 학습을 조기 종료하고, `ModelCheckpoint`는 가장 좋았던 시점의 모델을 파일로 저장합니다.
 
-```python no-run
+```python
+import tempfile, shutil
+ckpt_path = os.path.join(tempfile.mkdtemp(), "best_model.keras")   # 실기에선 "best_model.keras" 같은 파일명
+
 early = keras.callbacks.EarlyStopping(
     monitor="val_loss",         # 검증 손실을 감시
     patience=5,                 # 5 epoch 개선 없으면 중단
     restore_best_weights=True,  # 최적 가중치로 복원
 )
 checkpoint = keras.callbacks.ModelCheckpoint(
-    "best_model.keras",         # Keras 3: 확장자 .keras
+    ckpt_path,                  # Keras 3: 확장자 .keras 필수
     monitor="val_loss",
-    save_best_only=True,
+    save_best_only=True,        # 가장 좋은 시점만 저장
 )
 
 history = model.fit(
     X_train, y_train,
-    epochs=100,
+    epochs=3,                        # 책 실습용 축소
     batch_size=32,
     validation_split=0.2,
     callbacks=[early, checkpoint],   # 리스트로 전달
+    verbose=0,
 )
+print(os.path.exists(ckpt_path))     # 최적 모델이 파일로 저장됨
+# 출력: True
+shutil.rmtree(os.path.dirname(ckpt_path))   # 실습 정리 (실기에서는 불필요)
 ```
 
 > ⚠️ **함정**: `patience`는 "몇 epoch까지 참을지"입니다. 너무 작으면 잠깐의 정체에도 조기 종료되고, 너무 크면 과적합이 진행됩니다. 또 `restore_best_weights=True`를 빠뜨리면 조기 종료 시점의(최적이 아닌) 가중치가 남으니 함께 지정하세요. Keras 3에서 `ModelCheckpoint` 경로는 `.keras` 확장자로 끝나야 합니다.
@@ -121,12 +146,19 @@ history = model.fit(
 
 학습이 끝나면 평가용 데이터로 최종 성능을 확인합니다. `evaluate`는 compile에서 지정한 loss와 metrics를 반환하고, `predict`는 예측값을 냅니다 — 여기서도 scikit-learn과 인터페이스가 같습니다.
 
-```python no-run
-loss, acc = model.evaluate(X_test, y_test)   # [손실, 정확도]
-print(f"test accuracy: {acc:.3f}")
+```python
+# 평가용 소형 데이터
+X_test = np.random.rand(40, 10).astype("float32")
+y_test = (X_test[:, 0] > 0.5).astype("int32")
 
-probs = model.predict(X_test)                # 확률(sigmoid 출력)
-preds = (probs > 0.5).astype("int32")        # 0.5 기준 이진 변환
+loss, acc = model.evaluate(X_test, y_test, verbose=0)   # [손실, 정확도]
+print(0.0 <= acc <= 1.0)      # 정확도는 항상 0~1 범위 (값은 환경별 편차)
+# 출력: True
+
+probs = model.predict(X_test, verbose=0)     # 확률(sigmoid 출력)
+preds = (probs > 0.5).astype("int32")         # 0.5 기준 이진 변환
+print(probs.shape)                            # (샘플 수, 1)
+# 출력: (40, 1)
 ```
 
 > 🎯 **AICE**: 딥러닝 문항의 마무리는 `model.evaluate(X_test, y_test)`로 성능을 출력하고, `history`로 학습곡선을 그리는 흐름입니다. `evaluate`는 compile의 `metrics`에 따라 반환값 개수가 달라지므로(손실 + 각 지표), 정확도까지 원하면 compile에 `metrics=['accuracy']`를 반드시 넣어야 합니다.

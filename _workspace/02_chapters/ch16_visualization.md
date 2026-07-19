@@ -8,7 +8,7 @@
 
 시각화는 EDA에서 "숫자로는 안 보이는 것을 눈으로 확인하는" 단계입니다. JS 개발자라면 Chart.js나 D3로 그려 봤을 것입니다. Python 생태계에서는 **matplotlib**(저수준 엔진)과 그 위에 얹힌 **seaborn**(통계 플롯 특화)이 사실상 표준입니다. AICE 실기에서는 분포·상관·학습곡선을 그리는 문항이 반복됩니다.
 
-> 📦 **설치 안내**: 이 챕터의 코드는 실행 환경에 matplotlib·seaborn이 없어 검증에서 제외됩니다. 로컬에서 실습하려면 다음을 설치하세요.
+> 📦 **설치 안내**: 이 챕터의 플롯을 로컬에서 실습하려면 다음 패키지가 필요합니다(기본 파이썬 환경에는 없을 수 있습니다).
 > ```bash
 > pip install matplotlib seaborn
 > ```
@@ -23,7 +23,7 @@ matplotlib의 정신 모델은 "빈 도화지(figure)에 요소를 쌓고 마지
 | `new Chart(ctx, {type:'line', ...})` | `plt.plot(x, y)` |
 | `chart.options.title` | `plt.title("...")` |
 
-```python no-run
+```python
 import matplotlib.pyplot as plt
 
 x = [1, 2, 3, 4, 5]
@@ -39,7 +39,7 @@ plt.show()                     # 화면에 표시
 
 여러 그래프를 나란히 놓을 때는 `subplots`를 씁니다. 반환된 축(`ax`) 객체에 그립니다.
 
-```python no-run
+```python
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))   # 1행 2열
 axes[0].plot(x, y)
 axes[0].set_title("Line")
@@ -57,7 +57,7 @@ seaborn은 DataFrame을 직접 받아 통계 플롯을 그립니다. `data=`에 
 
 **countplot**은 범주형 열의 빈도를 셉니다(막대그래프). `df["col"].value_counts()`를 그림으로 보는 것입니다.
 
-```python no-run
+```python
 import seaborn as sns
 import pandas as pd
 
@@ -72,7 +72,7 @@ plt.show()
 
 **histplot**은 수치형 열의 분포를 구간(bin)으로 나눠 봅니다. `kde=True`를 주면 밀도 곡선을 겹칩니다.
 
-```python no-run
+```python
 sns.histplot(data=df, x="age", bins=10, kde=True)
 plt.title("Age Distribution")
 plt.show()
@@ -80,7 +80,7 @@ plt.show()
 
 **boxplot**은 사분위수·이상치를 한눈에 보여줍니다. 범주별 분포 비교에 유용합니다(`x`에 범주, `y`에 수치).
 
-```python no-run
+```python
 sns.boxplot(data=df, x="city", y="age")   # 도시별 나이 분포
 plt.title("Age by City")
 plt.show()
@@ -92,7 +92,7 @@ plt.show()
 
 수치형 특성들이 서로 얼마나 함께 움직이는지를 봅니다. `df.corr()`가 상관계수 행렬(−1~1)을 만들고, `sns.heatmap`이 색으로 표현합니다. 상관이 높은 특성 쌍을 찾아 다중공선성을 점검하는 EDA 단골입니다.
 
-```python no-run
+```python
 num_df = pd.DataFrame({
     "age": [25, 30, 35, 40, 45],
     "income": [2000, 2500, 4000, 5000, 7000],
@@ -112,7 +112,7 @@ plt.show()
 
 모델을 학습시키면(18장 Keras) epoch별 손실(loss)과 정확도가 기록됩니다. 이를 **학습(train) vs 검증(validation)** 두 선으로 그리면 과적합을 판단할 수 있습니다. 검증 손실이 다시 올라가기 시작하는 지점이 과적합의 신호입니다.
 
-```python no-run
+```python
 # history는 model.fit(...)이 반환하는 객체 (18장 참조)
 epochs = range(1, 11)
 train_loss = [0.9, 0.7, 0.55, 0.45, 0.38, 0.33, 0.30, 0.28, 0.27, 0.26]

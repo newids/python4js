@@ -6,7 +6,7 @@
 > - `TfidfVectorizer`로 단어 중요도를 반영한 특성을 만들 수 있다.
 > - 벡터라이저와 분류기를 Pipeline으로 묶어 텍스트 분류를 수행할 수 있다.
 
-머신러닝 모델은 숫자만 먹습니다. 텍스트를 넣으려면 **수치 특성**으로 바꿔야 합니다. 이 장은 그 표준 도구인 `CountVectorizer`·`TfidfVectorizer`를 다루며, 둘 다 sklearn이라 실행 가능합니다. 딥러닝 임베딩만 keras라 `no-run`입니다.
+머신러닝 모델은 숫자만 먹습니다. 텍스트를 넣으려면 **수치 특성**으로 바꿔야 합니다. 이 장은 그 표준 도구인 `CountVectorizer`·`TfidfVectorizer`(sklearn)를 다루고, 마지막에 딥러닝 임베딩(keras)을 맛봅니다.
 
 ```python
 corpus = [
@@ -98,13 +98,20 @@ print(pred[0] in (0, 1))
 
 ## 24.5 임베딩 개요
 
-BoW·TF-IDF는 단어를 독립된 열로만 봐서 "python"과 "javascript"의 의미적 유사성을 모릅니다. **임베딩(embedding)**은 단어를 의미가 담긴 밀집 벡터로 학습해 이 한계를 넘습니다. 딥러닝(keras) 영역이라 아래는 `no-run`입니다(23장 참조).
+BoW·TF-IDF는 단어를 독립된 열로만 봐서 "python"과 "javascript"의 의미적 유사성을 모릅니다. **임베딩(embedding)**은 단어를 의미가 담긴 밀집 벡터로 학습해 이 한계를 넘습니다(딥러닝, 23장 참조). `Embedding` 층은 단어 인덱스 시퀀스를 받아 각 단어를 밀집 벡터로 바꿉니다.
 
-```python no-run
+```python
+import numpy as np
+import tensorflow as tf
 from tensorflow.keras.layers import Embedding
 
-# 희소한 BoW 대신, 단어 인덱스를 64차원 밀집 벡터로 학습
-emb = Embedding(input_dim=10000, output_dim=64)   # 어휘 1만, 벡터 64차원
+tf.random.set_seed(42)
+# 희소한 BoW 대신, 단어 인덱스를 8차원 밀집 벡터로 학습
+emb = Embedding(input_dim=100, output_dim=8)   # 어휘 100, 벡터 8차원
+sample = np.array([[3, 7, 1]])                  # 단어 인덱스 시퀀스 1개
+vectors = emb(sample)
+print(vectors.shape)   # (문서 1, 단어 3, 임베딩 8)
+# 출력: (1, 3, 8)
 ```
 
 > 🎯 **AICE (출제 이력 불확실)**: 임베딩·딥러닝 기반 텍스트 처리는 AICE 공개 범위에 명시가 적어 **출제 여부가 확실하지 않습니다**. 시험 대비 우선순위는 실행 가능한 `CountVectorizer`·`TfidfVectorizer`와 텍스트 분류 파이프라인에 두고, 임베딩은 개념 수준으로 이해해 두면 충분합니다.

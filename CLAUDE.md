@@ -14,3 +14,4 @@
 | 2026-07-19 | 초기 구성 (에이전트 5, 스킬 5) | 전체 | - |
 | 2026-07-19 | 빌드 스크립트가 `appendix*.md`도 챕터 뒤에 포함하도록 패치 | skills/ebook-building | 부록 3편이 `ch*.md` glob에 안 잡히는 결함 발견 |
 | 2026-07-19 | 1차 e-book 생성 실행 완료 (24챕터+부록 3, Associate+Professional). 환경에 팀 도구(TeamCreate) 부재로 서브 에이전트 모드로 대체 실행 — 점진 검증은 집필자 자가 검증 + 독립 검증자 이중화로 구현 | 운영 기록 | 실행 환경 제약 |
+| 2026-07-19 | 검증 스크립트 다중 파일 실행을 파일별 격리 프로세스로 변경 (타임아웃 300s/파일 포함) | skills/code-verification | matplotlib↔TensorFlow OpenMP 충돌로 같은 프로세스 연속 실행 시 fit 교착 (집필자 발견) |

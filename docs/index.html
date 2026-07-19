@@ -1773,7 +1773,7 @@ print(round(float(X_scaled.mean()), 1))
 <article id="ch16_visualization"><h1>Chapter 16. 시각화</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- matplotlib의 기본 플롯 구조(figure–plot–show)를 이해하고 그릴 수 있다<br>- seaborn의 countplot/histplot/boxplot으로 분포를 시각화할 수 있다<br>- 상관관계 heatmap으로 특성 간 관계를 읽을 수 있다<br>- 학습곡선을 그려 모델의 과적합 여부를 판단할 수 있다</blockquote>
 <p>시각화는 EDA에서 "숫자로는 안 보이는 것을 눈으로 확인하는" 단계입니다. JS 개발자라면 Chart.js나 D3로 그려 봤을 것입니다. Python 생태계에서는 <strong>matplotlib</strong>(저수준 엔진)과 그 위에 얹힌 <strong>seaborn</strong>(통계 플롯 특화)이 사실상 표준입니다. AICE 실기에서는 분포·상관·학습곡선을 그리는 문항이 반복됩니다.</p>
-<blockquote class="callout">📦 <strong>설치 안내</strong>: 이 챕터의 코드는 실행 환경에 matplotlib·seaborn이 없어 검증에서 제외됩니다. 로컬에서 실습하려면 다음을 설치하세요.<br>```bash<br>pip install matplotlib seaborn<br>```<br>Jupyter에서는 <code>%matplotlib inline</code>을 한 번 실행하면 셀 아래에 그림이 바로 표시됩니다.</blockquote>
+<blockquote class="callout">📦 <strong>설치 안내</strong>: 이 챕터의 플롯을 로컬에서 실습하려면 다음 패키지가 필요합니다(기본 파이썬 환경에는 없을 수 있습니다).<br>```bash<br>pip install matplotlib seaborn<br>```<br>Jupyter에서는 <code>%matplotlib inline</code>을 한 번 실행하면 셀 아래에 그림이 바로 표시됩니다.</blockquote>
 <h2>16.1 matplotlib 기본 — figure, plot, show</h2>
 <p>matplotlib의 정신 모델은 "빈 도화지(figure)에 요소를 쌓고 마지막에 보여준다(show)"입니다. Chart.js가 설정 객체를 넘기는 선언형이라면, matplotlib는 명령을 순서대로 쌓는 명령형에 가깝습니다.</p>
 <table><thead><tr><th>JavaScript (Chart.js)</th><th>Python (matplotlib)</th></tr></thead><tbody><tr><td><code>new Chart(ctx, {type:'line', ...})</code></td><td><code>plt.plot(x, y)</code></td></tr><tr><td><code>chart.options.title</code></td><td><code>plt.title("...")</code></td></tr></tbody></table>
@@ -2020,11 +2020,18 @@ print(acc)
 <article id="ch18_keras_basics"><h1>Chapter 18. Keras 딥러닝 기초</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- Sequential과 Dense로 신경망 구조를 쌓을 수 있다<br>- compile로 optimizer/loss/metrics를 설정할 수 있다<br>- fit의 epochs/batch_size/validation로 학습을 제어할 수 있다<br>- EarlyStopping/ModelCheckpoint 콜백과 evaluate로 학습을 관리·평가할 수 있다</blockquote>
 <p>딥러닝은 AICE Associate 실기의 마지막 관문입니다. 다행히 Keras는 17장의 scikit-learn과 <strong>정신 모델이 같습니다</strong>: 모델을 만들고(구성) → 설정하고(compile) → 학습하고(fit) → 평가한다(evaluate). 층(layer)을 순서대로 쌓는 것은 함수를 합성하거나 미들웨어를 체이닝하던 감각과 비슷합니다. 새로 외울 것은 "층의 종류와 compile 인자"뿐입니다.</p>
-<blockquote class="callout">📦 <strong>설치 안내</strong>: 이 챕터의 코드는 실행 환경에 TensorFlow/Keras가 없어 검증에서 제외됩니다. 로컬에서 실습하려면 다음을 설치하세요.<br>```bash<br>pip install tensorflow<br>```<br><code>from tensorflow import keras</code>로 불러오며, 최신 Keras 3 기준으로 설명합니다.</blockquote>
+<blockquote class="callout">📦 <strong>설치 안내</strong>: 이 챕터를 로컬에서 실습하려면 TensorFlow가 필요합니다(기본 파이썬 환경에는 없을 수 있습니다).<br>```bash<br>pip install tensorflow<br>```<br><code>from tensorflow import keras</code>로 불러오며, 최신 Keras 3 기준으로 설명합니다. 예제는 재현성을 위해 시드를 고정하고, 책에서는 학습 시간을 줄이려 <code>epochs</code>를 작게(1~3) 두었습니다.</blockquote>
 <h2>18.1 Sequential과 Dense — 층을 쌓기</h2>
 <p>가장 기본 구조는 층을 <strong>일렬로 쌓는</strong> <code>Sequential</code>입니다. 각 <code>Dense</code>(완전연결층)는 뉴런 수와 활성화 함수를 받습니다. JS로 비유하면 입력을 순서대로 통과시키는 변환 파이프라인을 선언하는 것과 같습니다.</p>
-<pre class="lang-python"><code>from tensorflow import keras
+<pre class="lang-python"><code>import os
+os.environ.setdefault(&quot;TF_CPP_MIN_LOG_LEVEL&quot;, &quot;3&quot;)   # TensorFlow 로그 최소화
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
 from tensorflow.keras import layers
+
+np.random.seed(42)
+tf.random.set_seed(42)                        # 재현성 고정
 
 model = keras.Sequential([
     keras.Input(shape=(10,)),                 # 입력 특성 10개
@@ -2032,7 +2039,9 @@ model = keras.Sequential([
     layers.Dense(32, activation=&quot;relu&quot;),      # 은닉층 32뉴런
     layers.Dense(1, activation=&quot;sigmoid&quot;),    # 출력층: 이진분류
 ])
-model.summary()   # 층 구조와 파라미터 수 출력</code></pre>
+print(model.count_params())   # 전체 학습 파라미터 수
+# 출력: 2817
+model.summary()               # 층 구조와 파라미터 요약 출력</code></pre>
 <p><strong>활성화 함수</strong>는 층에 비선형성을 부여합니다. 은닉층에는 보통 <code>relu</code>, 출력층은 문제에 따라 다릅니다: 이진분류는 <code>sigmoid</code>(0~1 확률), 다중분류는 <code>softmax</code>(합이 1인 분포), 회귀는 활성화 없음(선형).</p>
 <table><thead><tr><th>문제 유형</th><th>출력층 뉴런 수</th><th>출력층 활성화</th></tr></thead><tbody><tr><td>회귀</td><td>1</td><td>없음(linear)</td></tr><tr><td>이진분류</td><td>1</td><td>sigmoid</td></tr><tr><td>다중분류(N클래스)</td><td>N</td><td>softmax</td></tr></tbody></table>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: 첫 층에서 <code>keras.Input(shape=(특성수,))</code>로 입력 형태를 알려 줘야 합니다. <code>shape</code>는 <strong>샘플 하나의 형태</strong>라 배치 크기는 넣지 않습니다. 특성이 10개면 <code>(10,)</code>이지 <code>(샘플수, 10)</code>이 아닙니다. 튜플 안 쉼표(<code>(10,)</code>)를 빠뜨리면 정수로 해석돼 에러가 납니다(4장 튜플).</blockquote>
@@ -2049,44 +2058,67 @@ model.summary()   # 층 구조와 파라미터 수 출력</code></pre>
 <h2>18.3 fit — 학습 실행</h2>
 <p><code>fit</code>으로 학습합니다. 17장 scikit-learn의 <code>fit</code>과 이름이 같지만, 딥러닝은 데이터를 <strong>여러 번 반복</strong> 학습하므로 인자가 더 많습니다.</p>
 <ul><li><code>epochs</code>: 전체 데이터를 몇 번 반복할지</li><li><code>batch_size</code>: 한 번에 처리할 샘플 수(메모리·속도 조절)</li><li><code>validation_split</code> 또는 <code>validation_data</code>: 학습 중 검증 성능 확인</li></ul>
-<pre class="lang-python"><code>history = model.fit(
+<pre class="lang-python"><code># 실습용 소형 데이터 (200샘플 × 10특성, 0/1 이진 라벨)
+X_train = np.random.rand(200, 10).astype(&quot;float32&quot;)
+y_train = (X_train[:, 0] &gt; 0.5).astype(&quot;int32&quot;)
+
+history = model.fit(
     X_train, y_train,
-    epochs=50,
+    epochs=3,                 # 책 실습용 축소 (실제로는 수십~수백)
     batch_size=32,
     validation_split=0.2,     # 학습 데이터의 20%를 검증에 사용
-)</code></pre>
+    verbose=0,                # 진행 로그 생략
+)
+print(len(history.history[&quot;loss&quot;]))   # 기록된 epoch 수
+# 출력: 3</code></pre>
 <p><code>fit</code>은 <code>history</code> 객체를 반환하며, <code>history.history</code>에 epoch별 손실·지표가 딕셔너리로 담깁니다. 16장의 학습곡선이 이 값을 그리는 것입니다.</p>
-<pre class="lang-python"><code>print(history.history.keys())
-# dict_keys([&#x27;loss&#x27;, &#x27;accuracy&#x27;, &#x27;val_loss&#x27;, &#x27;val_accuracy&#x27;])</code></pre>
+<pre class="lang-python"><code>print(&quot;val_loss&quot; in history.history)   # 검증 손실이 기록되었는가
+# 출력: True
+print(sorted(history.history.keys()))  # 기록된 지표 이름들
+# 출력: [&#x27;accuracy&#x27;, &#x27;loss&#x27;, &#x27;val_accuracy&#x27;, &#x27;val_loss&#x27;]</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: <code>validation_split</code>은 학습 데이터의 <strong>뒷부분을 순서대로</strong> 떼어 검증에 씁니다. 데이터가 클래스별로 정렬돼 있으면 검증셋이 한 클래스로 쏠려 성능이 왜곡됩니다. 미리 섞여 있지 않다면 17장의 <code>train_test_split</code>으로 별도 검증셋을 만들어 <code>validation_data=(X_val, y_val)</code>로 넘기는 편이 안전합니다.</blockquote>
 <h2>18.4 콜백 — EarlyStopping과 ModelCheckpoint</h2>
 <p><strong>콜백</strong>은 학습 도중 자동으로 개입하는 훅입니다(JS의 이벤트 콜백과 같은 발상). 두 가지가 필수입니다. <code>EarlyStopping</code>은 검증 성능이 나아지지 않으면 학습을 조기 종료하고, <code>ModelCheckpoint</code>는 가장 좋았던 시점의 모델을 파일로 저장합니다.</p>
-<pre class="lang-python"><code>early = keras.callbacks.EarlyStopping(
+<pre class="lang-python"><code>import tempfile, shutil
+ckpt_path = os.path.join(tempfile.mkdtemp(), &quot;best_model.keras&quot;)   # 실기에선 &quot;best_model.keras&quot; 같은 파일명
+
+early = keras.callbacks.EarlyStopping(
     monitor=&quot;val_loss&quot;,         # 검증 손실을 감시
     patience=5,                 # 5 epoch 개선 없으면 중단
     restore_best_weights=True,  # 최적 가중치로 복원
 )
 checkpoint = keras.callbacks.ModelCheckpoint(
-    &quot;best_model.keras&quot;,         # Keras 3: 확장자 .keras
+    ckpt_path,                  # Keras 3: 확장자 .keras 필수
     monitor=&quot;val_loss&quot;,
-    save_best_only=True,
+    save_best_only=True,        # 가장 좋은 시점만 저장
 )
 
 history = model.fit(
     X_train, y_train,
-    epochs=100,
+    epochs=3,                        # 책 실습용 축소
     batch_size=32,
     validation_split=0.2,
     callbacks=[early, checkpoint],   # 리스트로 전달
-)</code></pre>
+    verbose=0,
+)
+print(os.path.exists(ckpt_path))     # 최적 모델이 파일로 저장됨
+# 출력: True
+shutil.rmtree(os.path.dirname(ckpt_path))   # 실습 정리 (실기에서는 불필요)</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: <code>patience</code>는 "몇 epoch까지 참을지"입니다. 너무 작으면 잠깐의 정체에도 조기 종료되고, 너무 크면 과적합이 진행됩니다. 또 <code>restore_best_weights=True</code>를 빠뜨리면 조기 종료 시점의(최적이 아닌) 가중치가 남으니 함께 지정하세요. Keras 3에서 <code>ModelCheckpoint</code> 경로는 <code>.keras</code> 확장자로 끝나야 합니다.</blockquote>
 <h2>18.5 evaluate와 predict — 평가와 예측</h2>
 <p>학습이 끝나면 평가용 데이터로 최종 성능을 확인합니다. <code>evaluate</code>는 compile에서 지정한 loss와 metrics를 반환하고, <code>predict</code>는 예측값을 냅니다 — 여기서도 scikit-learn과 인터페이스가 같습니다.</p>
-<pre class="lang-python"><code>loss, acc = model.evaluate(X_test, y_test)   # [손실, 정확도]
-print(f&quot;test accuracy: {acc:.3f}&quot;)
+<pre class="lang-python"><code># 평가용 소형 데이터
+X_test = np.random.rand(40, 10).astype(&quot;float32&quot;)
+y_test = (X_test[:, 0] &gt; 0.5).astype(&quot;int32&quot;)
 
-probs = model.predict(X_test)                # 확률(sigmoid 출력)
-preds = (probs &gt; 0.5).astype(&quot;int32&quot;)        # 0.5 기준 이진 변환</code></pre>
+loss, acc = model.evaluate(X_test, y_test, verbose=0)   # [손실, 정확도]
+print(0.0 &lt;= acc &lt;= 1.0)      # 정확도는 항상 0~1 범위 (값은 환경별 편차)
+# 출력: True
+
+probs = model.predict(X_test, verbose=0)     # 확률(sigmoid 출력)
+preds = (probs &gt; 0.5).astype(&quot;int32&quot;)         # 0.5 기준 이진 변환
+print(probs.shape)                            # (샘플 수, 1)
+# 출력: (40, 1)</code></pre>
 <blockquote class="callout-aice">🎯 <strong>AICE</strong>: 딥러닝 문항의 마무리는 <code>model.evaluate(X_test, y_test)</code>로 성능을 출력하고, <code>history</code>로 학습곡선을 그리는 흐름입니다. <code>evaluate</code>는 compile의 <code>metrics</code>에 따라 반환값 개수가 달라지므로(손실 + 각 지표), 정확도까지 원하면 compile에 <code>metrics=['accuracy']</code>를 반드시 넣어야 합니다.</blockquote>
 <h2>연습문제</h2>
 <p><strong>Q1.</strong> 특성 8개를 입력받아 이진분류하는 3층 신경망을 만들려 합니다. 빈칸을 채우세요.</p>
@@ -2471,7 +2503,7 @@ pipe.fit(X_train, y_train)</code></pre>
 <table><thead><tr><th>JS</th><th>Python</th><th>비고</th></tr></thead><tbody><tr><td>중첩 for 루프 파라미터 스윕</td><td><code>GridSearchCV(model, param_grid, cv=)</code></td><td>조합 × 교차검증</td></tr><tr><td>무작위 샘플링 탐색</td><td><code>RandomizedSearchCV(..., n_iter=)</code></td><td>넓은 공간 저비용 탐색</td></tr><tr><td>함수 합성 / 미들웨어 체인</td><td><code>Pipeline([(name, step), ...])</code></td><td>전처리+모델 단일 객체</td></tr><tr><td>필드별 변환 매핑</td><td><code>ColumnTransformer([(name, tf, cols)])</code></td><td>열 종류별 전처리</td></tr><tr><td><code>obj.step.param</code></td><td><code>"step__param"</code> (더블 언더스코어)</td><td>Pipeline 파라미터 지정</td></tr></tbody></table></article>
 <article id="ch22_model_evaluation"><h1>Chapter 22. 모델 평가 심화와 교차검증</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- K-Fold 교차검증으로 단일 분할보다 신뢰도 높은 성능을 추정할 수 있다.<br>- <code>cross_val_score</code>로 여러 폴드 점수를 한 번에 계산할 수 있다.<br>- ROC 곡선·AUC로 임계값 전반의 분류 성능을 평가할 수 있다.<br>- precision-recall 트레이드오프를 이해하고 임계값을 조정할 수 있다.</blockquote>
-<p>17장의 <code>train_test_split</code>은 데이터를 한 번만 나눕니다. 운 나쁜 분할이면 성능이 왜곡됩니다. <strong>교차검증(cross-validation)</strong>은 분할을 여러 번 바꿔 평균 내어 이 불안정을 줄입니다. AUC·임계값 조정은 정확도 하나로는 안 보이는 분류기의 실체를 드러냅니다. 계산은 sklearn으로 실행 가능하며, <strong>시각화(ROC 플롯) 부분만</strong> matplotlib 미설치로 <code>no-run</code>입니다.</p>
+<p>17장의 <code>train_test_split</code>은 데이터를 한 번만 나눕니다. 운 나쁜 분할이면 성능이 왜곡됩니다. <strong>교차검증(cross-validation)</strong>은 분할을 여러 번 바꿔 평균 내어 이 불안정을 줄입니다. AUC·임계값 조정은 정확도 하나로는 안 보이는 분류기의 실체를 드러냅니다. 계산은 sklearn, 시각화는 matplotlib으로 수행합니다.</p>
 <pre class="lang-python"><code>import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
@@ -2520,9 +2552,10 @@ fpr, tpr, thresholds = roc_curve(y_test, proba)
 print(fpr.min() == 0.0)
 # 출력: True</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: <code>predict_proba</code>는 (표본 수 × 클래스 수) 2차원 배열을 반환합니다. 양성 클래스 확률만 쓰려면 <code>[:, 1]</code>로 두 번째 열을 골라야 합니다. <code>predict</code>(0/1 라벨)를 <code>roc_auc_score</code>에 넣으면 곡선이 계단이 되어 AUC가 왜곡됩니다.</blockquote>
-<p>시각화는 matplotlib이 필요해 아래는 <code>no-run</code>입니다. 설치 시 <code>pip install matplotlib</code>.</p>
+<p>ROC 곡선을 그려 봅니다. matplotlib이 필요합니다(미설치 시 <code>pip install matplotlib</code>).</p>
 <pre class="lang-python"><code>import matplotlib.pyplot as plt
 
+plt.figure()
 plt.plot(fpr, tpr, label=f&quot;AUC = {auc:.2f}&quot;)
 plt.plot([0, 1], [0, 1], &quot;--&quot;)   # 무작위 분류기 기준선
 plt.xlabel(&quot;False Positive Rate&quot;)
@@ -2582,14 +2615,16 @@ auc = roc_auc_score(y_test, proba)</code></pre>
 <article id="ch23_deep_learning_advanced"><h1>Chapter 23. 딥러닝 심화: CNN·RNN·시계열</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- CNN(합성곱 신경망)의 <code>Conv2D</code>·<code>Pooling</code> 구조와 이미지 데이터 형태를 이해한다.<br>- RNN/LSTM으로 시퀀스 데이터를 처리하는 모델을 구성할 수 있다.<br>- 시계열 데이터를 윈도우(window)로 잘라 지도학습 형태로 변환할 수 있다.<br>- <code>EarlyStopping</code>·<code>ModelCheckpoint</code> 콜백을 학습에 활용할 수 있다.</blockquote>
 <p>18장의 <code>Sequential</code>+<code>Dense</code>는 정형 데이터(표)를 다뤘습니다. 이미지·텍스트·시계열은 <strong>공간·순서 구조</strong>를 가지므로 전용 층이 필요합니다. 이미지엔 CNN, 순서 데이터엔 RNN/LSTM입니다.</p>
-<blockquote class="callout-warn"><strong>⚠️ 실행 환경 안내</strong>: 이 장의 모든 코드는 TensorFlow/Keras가 필요하며, 이 책의 검증 환경에는 미설치라 <strong>전 코드가 <code>no-run</code></strong>입니다. 직접 실행하려면 다음을 설치하세요.<br>```bash<br>pip install tensorflow<br>```<br>API 시그니처는 Keras 공식 기준으로 작성했습니다. 층을 쌓는 발상은 18장과 동일하니, 새 층의 <strong>역할과 인자</strong>에 집중하세요.</blockquote>
+<blockquote class="callout-warn"><strong>⚠️ 실행 환경 안내</strong>: 이 장의 코드는 TensorFlow/Keras가 필요합니다. 미설치 시 다음으로 설치하세요.<br>```bash<br>pip install tensorflow<br>```<br>딥러닝 학습은 무거우므로 이 장 예제는 입력 크기·에폭을 <strong>개념 확인용으로 최소화</strong>했습니다(실무에선 더 큰 데이터·에폭). 층을 쌓는 발상은 18장과 동일하니, 새 층의 <strong>역할과 인자</strong>에 집중하세요.</blockquote>
 <blockquote class="callout-aice">🎯 <strong>AICE (출제 이력 불확실)</strong>: CNN·RNN의 AICE Professional 실기 출제 <strong>비중은 공개 정보가 적어 확실하지 않습니다</strong>. 다만 딥러닝 심화는 Professional의 성격상 다뤄질 가능성이 높아, 구조를 손으로 구성할 수 있는 수준까지 익혀두는 것을 권합니다.</blockquote>
 <h2>23.1 CNN — 이미지용 합성곱 신경망</h2>
 <p>정형 데이터는 <code>Dense</code>로 충분하지만, 이미지는 인접 픽셀의 <strong>공간 패턴</strong>(모서리·질감)이 중요합니다. <code>Conv2D</code>는 작은 필터를 이미지 위로 훑어 이런 국소 패턴을 뽑고, <code>MaxPooling2D</code>는 크기를 줄여 계산량과 위치 민감도를 낮춥니다.</p>
-<pre class="lang-python"><code>from tensorflow.keras import Sequential
+<pre class="lang-python"><code>import tensorflow as tf
+from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 
-model = Sequential([
+tf.random.set_seed(42)
+cnn = Sequential([
     Conv2D(32, (3, 3), activation=&quot;relu&quot;, input_shape=(28, 28, 1)),
     MaxPooling2D((2, 2)),
     Conv2D(64, (3, 3), activation=&quot;relu&quot;),
@@ -2598,30 +2633,35 @@ model = Sequential([
     Dense(64, activation=&quot;relu&quot;),
     Dense(10, activation=&quot;softmax&quot;),        # 10개 클래스 분류
 ])
-model.compile(optimizer=&quot;adam&quot;,
-              loss=&quot;sparse_categorical_crossentropy&quot;,
-              metrics=[&quot;accuracy&quot;])</code></pre>
+cnn.compile(optimizer=&quot;adam&quot;,
+            loss=&quot;sparse_categorical_crossentropy&quot;,
+            metrics=[&quot;accuracy&quot;])
+print(cnn.output_shape)   # 마지막 층 출력 형태
+# 출력: (None, 10)</code></pre>
 <p>핵심은 마지막 두 층입니다. <code>Flatten</code>으로 합성곱이 만든 2D 특성맵을 펼쳐야 <code>Dense</code>에 연결됩니다.</p>
 <h2>23.2 이미지 데이터의 형태</h2>
 <p>이미지 데이터는 4차원 텐서 <strong>(표본 수, 높이, 너비, 채널)</strong>입니다. 흑백은 채널 1, 컬러(RGB)는 3입니다. 픽셀값(0~255)은 학습 안정을 위해 255로 나눠 0~1로 <strong>정규화</strong>합니다.</p>
 <pre class="lang-python"><code>import numpy as np
 
+np.random.seed(42)
 # 예: 흑백 28×28 이미지 100장
 images = np.random.randint(0, 256, size=(100, 28, 28, 1))
 images = images.astype(&quot;float32&quot;) / 255.0   # 0~1 정규화
-print(images.shape)   # (100, 28, 28, 1)</code></pre>
+print(images.shape)
+# 출력: (100, 28, 28, 1)</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: <code>Conv2D</code>의 <code>input_shape</code>에는 <strong>표본 수를 넣지 않습니다</strong>. <code>(28, 28, 1)</code>처럼 한 장의 형태만 지정하고, 표본 축은 Keras가 배치 처리 시 자동으로 붙입니다. JS에서 배열 전체 길이를 함께 넘기던 습관과 다릅니다.</blockquote>
 <h2>23.3 RNN/LSTM — 순서가 있는 데이터</h2>
 <p>문장·주가처럼 <strong>순서</strong>가 의미를 갖는 데이터는 RNN 계열로 처리합니다. 기본 RNN은 긴 시퀀스에서 앞부분을 잊는 문제가 있어, 이를 개선한 <strong>LSTM</strong>을 주로 씁니다. 입력 형태는 <strong>(표본 수, 타임스텝, 특성 수)</strong> 3차원입니다.</p>
-<pre class="lang-python"><code>from tensorflow.keras import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+<pre class="lang-python"><code>from tensorflow.keras.layers import LSTM
 
 timesteps, features = 10, 1
 model = Sequential([
     LSTM(64, input_shape=(timesteps, features)),   # 순서 정보 처리
     Dense(1),                                       # 회귀 출력(다음 값 예측)
 ])
-model.compile(optimizer=&quot;adam&quot;, loss=&quot;mse&quot;)</code></pre>
+model.compile(optimizer=&quot;adam&quot;, loss=&quot;mse&quot;)
+print(model.output_shape)
+# 출력: (None, 1)</code></pre>
 <p>텍스트 분류라면 <code>LSTM</code> 앞에 <code>Embedding</code> 층을 두어 단어 인덱스를 밀집 벡터로 바꿉니다(24장 참조).</p>
 <pre class="lang-python"><code>from tensorflow.keras.layers import Embedding
 
@@ -2629,12 +2669,12 @@ text_model = Sequential([
     Embedding(input_dim=10000, output_dim=32),   # 어휘 1만 → 32차원 벡터
     LSTM(64),
     Dense(1, activation=&quot;sigmoid&quot;),               # 이진 분류
-])</code></pre>
+])
+print(len(text_model.layers))
+# 출력: 3</code></pre>
 <h2>23.4 시계열 데이터 준비 — 윈도우 슬라이싱</h2>
 <p>시계열은 원본이 1차원 수열이라, 지도학습에 넣으려면 <strong>윈도우</strong>로 잘라야 합니다. "직전 n개 값 → 다음 값"을 (X, y) 쌍으로 만드는 것입니다. 이 변환은 순수 numpy로, 발상은 JS 배열 슬라이딩 윈도우와 같습니다.</p>
-<pre class="lang-python"><code>import numpy as np
-
-def make_windows(series, window):
+<pre class="lang-python"><code>def make_windows(series, window):
     X, y = [], []
     for i in range(len(series) - window):
         X.append(series[i:i + window])   # 직전 window개
@@ -2644,25 +2684,31 @@ def make_windows(series, window):
 series = np.sin(np.linspace(0, 20, 200))
 X, y = make_windows(series, window=10)
 X = X.reshape(X.shape[0], X.shape[1], 1)   # (표본, 타임스텝, 특성)로 reshape
-print(X.shape)   # (190, 10, 1)</code></pre>
+print(X.shape)
+# 출력: (190, 10, 1)</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: LSTM 입력은 반드시 <strong>3차원</strong>이어야 합니다. <code>make_windows</code>가 만든 2차원 <code>(표본, 타임스텝)</code>을 <code>reshape(..., ..., 1)</code>로 특성 축을 추가해야 합니다. 이 축을 빠뜨리면 <code>expected 3 dimensions</code> 에러가 납니다.</blockquote>
 <h2>23.5 콜백 — 학습 제어</h2>
 <p>18장에서 본 <code>EarlyStopping</code>·<code>ModelCheckpoint</code>는 심화 학습에서 더 중요합니다. 긴 학습에서 과적합 직전에 멈추고(EarlyStopping), 최고 성능 시점을 저장(ModelCheckpoint)합니다.</p>
-<pre class="lang-python"><code>from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+<pre class="lang-python"><code>import os, tempfile
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
+ckpt_path = os.path.join(tempfile.gettempdir(), &quot;best_model.keras&quot;)
 callbacks = [
     EarlyStopping(monitor=&quot;val_loss&quot;, patience=3,
-                  restore_best_weights=True),          # 3에폭 개선 없으면 중단
-    ModelCheckpoint(&quot;best_model.keras&quot;, monitor=&quot;val_loss&quot;,
+                  restore_best_weights=True),          # 개선 없으면 조기 중단
+    ModelCheckpoint(ckpt_path, monitor=&quot;val_loss&quot;,
                     save_best_only=True),               # 최고 성능만 저장
 ]
 
 history = model.fit(
     X, y,
-    epochs=50, batch_size=32,
-    validation_split=0.2,     # train의 20%를 검증에
+    epochs=3, batch_size=32,   # 시연용 3에폭 (실무에선 크게, EarlyStopping이 중단 담당)
+    validation_split=0.2,      # train의 20%를 검증에
     callbacks=callbacks,
-)</code></pre>
+    verbose=0,
+)
+print(len(history.history[&quot;loss&quot;]) &lt;= 3)
+# 출력: True</code></pre>
 <blockquote class="callout-aice">🎯 <strong>AICE</strong>: <code>EarlyStopping(monitor="val_loss", patience=...)</code>와 <code>fit(..., callbacks=[...])</code>의 결합은 Professional 딥러닝 문항의 단골입니다. <code>monitor</code>는 감시할 지표, <code>patience</code>는 참을 에폭 수, <code>restore_best_weights=True</code>로 최적 가중치를 복원한다는 흐름을 외우세요.</blockquote>
 <h2>연습문제</h2>
 <p><strong>Q1.</strong> 첫 합성곱 층에 필터 32개, 3×3 커널, 흑백 28×28 입력을 지정하세요.</p>
@@ -2694,7 +2740,7 @@ model.fit(X, y, epochs=50, callbacks=[es])</code></pre>
 <table><thead><tr><th>JS</th><th>Python(Keras)</th><th>비고</th></tr></thead><tbody><tr><td>층 함수 합성</td><td><code>Sequential([Conv2D(...), ...])</code></td><td>18장 Dense 스택의 확장</td></tr><tr><td>배열 전체 길이 전달</td><td><code>input_shape=(28,28,1)</code> (표본 축 제외)</td><td>배치 축은 자동</td></tr><tr><td>슬라이딩 윈도우</td><td><code>series[i:i+window]</code> + <code>reshape</code></td><td>시계열 → (표본,타임스텝,특성)</td></tr><tr><td>조기 종료 조건문</td><td><code>EarlyStopping(patience=...)</code></td><td>콜백으로 학습 제어</td></tr><tr><td>단어 → 벡터 매핑</td><td><code>Embedding(input_dim, output_dim)</code></td><td>24장 텍스트와 연결</td></tr></tbody></table></article>
 <article id="ch24_text_processing"><h1>Chapter 24. 텍스트 데이터 처리 기초</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- 토큰화·정규화·불용어 제거의 역할을 이해한다.<br>- <code>CountVectorizer</code>로 텍스트를 단어 빈도 행렬(BoW)로 변환할 수 있다.<br>- <code>TfidfVectorizer</code>로 단어 중요도를 반영한 특성을 만들 수 있다.<br>- 벡터라이저와 분류기를 Pipeline으로 묶어 텍스트 분류를 수행할 수 있다.</blockquote>
-<p>머신러닝 모델은 숫자만 먹습니다. 텍스트를 넣으려면 <strong>수치 특성</strong>으로 바꿔야 합니다. 이 장은 그 표준 도구인 <code>CountVectorizer</code>·<code>TfidfVectorizer</code>를 다루며, 둘 다 sklearn이라 실행 가능합니다. 딥러닝 임베딩만 keras라 <code>no-run</code>입니다.</p>
+<p>머신러닝 모델은 숫자만 먹습니다. 텍스트를 넣으려면 <strong>수치 특성</strong>으로 바꿔야 합니다. 이 장은 그 표준 도구인 <code>CountVectorizer</code>·<code>TfidfVectorizer</code>(sklearn)를 다루고, 마지막에 딥러닝 임베딩(keras)을 맛봅니다.</p>
 <pre class="lang-python"><code>corpus = [
     &quot;Python is great for data science&quot;,
     &quot;JavaScript is great for web&quot;,
@@ -2750,11 +2796,18 @@ print(pred[0] in (0, 1))
 # 출력: True</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>함정</strong>: Pipeline에 벡터라이저를 넣으면, <code>predict</code>에 넘기는 것도 <strong>벡터가 아니라 원문 문자열 리스트</strong>입니다. 직접 <code>fit_transform</code>으로 벡터를 만든 뒤 그 벡터를 다시 넘기려다 이중 변환하는 실수를 피하세요. Pipeline이 변환을 내부에서 처리합니다.</blockquote>
 <h2>24.5 임베딩 개요</h2>
-<p>BoW·TF-IDF는 단어를 독립된 열로만 봐서 "python"과 "javascript"의 의미적 유사성을 모릅니다. <strong>임베딩(embedding)</strong>은 단어를 의미가 담긴 밀집 벡터로 학습해 이 한계를 넘습니다. 딥러닝(keras) 영역이라 아래는 <code>no-run</code>입니다(23장 참조).</p>
-<pre class="lang-python"><code>from tensorflow.keras.layers import Embedding
+<p>BoW·TF-IDF는 단어를 독립된 열로만 봐서 "python"과 "javascript"의 의미적 유사성을 모릅니다. <strong>임베딩(embedding)</strong>은 단어를 의미가 담긴 밀집 벡터로 학습해 이 한계를 넘습니다(딥러닝, 23장 참조). <code>Embedding</code> 층은 단어 인덱스 시퀀스를 받아 각 단어를 밀집 벡터로 바꿉니다.</p>
+<pre class="lang-python"><code>import numpy as np
+import tensorflow as tf
+from tensorflow.keras.layers import Embedding
 
-# 희소한 BoW 대신, 단어 인덱스를 64차원 밀집 벡터로 학습
-emb = Embedding(input_dim=10000, output_dim=64)   # 어휘 1만, 벡터 64차원</code></pre>
+tf.random.set_seed(42)
+# 희소한 BoW 대신, 단어 인덱스를 8차원 밀집 벡터로 학습
+emb = Embedding(input_dim=100, output_dim=8)   # 어휘 100, 벡터 8차원
+sample = np.array([[3, 7, 1]])                  # 단어 인덱스 시퀀스 1개
+vectors = emb(sample)
+print(vectors.shape)   # (문서 1, 단어 3, 임베딩 8)
+# 출력: (1, 3, 8)</code></pre>
 <blockquote class="callout-aice">🎯 <strong>AICE (출제 이력 불확실)</strong>: 임베딩·딥러닝 기반 텍스트 처리는 AICE 공개 범위에 명시가 적어 <strong>출제 여부가 확실하지 않습니다</strong>. 시험 대비 우선순위는 실행 가능한 <code>CountVectorizer</code>·<code>TfidfVectorizer</code>와 텍스트 분류 파이프라인에 두고, 임베딩은 개념 수준으로 이해해 두면 충분합니다.</blockquote>
 <h2>연습문제</h2>
 <p><strong>Q1.</strong> 영어 불용어를 제거하는 TF-IDF 벡터라이저로 말뭉치를 변환하세요.</p>

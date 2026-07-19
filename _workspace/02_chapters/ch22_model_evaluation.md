@@ -6,7 +6,7 @@
 > - ROC 곡선·AUC로 임계값 전반의 분류 성능을 평가할 수 있다.
 > - precision-recall 트레이드오프를 이해하고 임계값을 조정할 수 있다.
 
-17장의 `train_test_split`은 데이터를 한 번만 나눕니다. 운 나쁜 분할이면 성능이 왜곡됩니다. **교차검증(cross-validation)**은 분할을 여러 번 바꿔 평균 내어 이 불안정을 줄입니다. AUC·임계값 조정은 정확도 하나로는 안 보이는 분류기의 실체를 드러냅니다. 계산은 sklearn으로 실행 가능하며, **시각화(ROC 플롯) 부분만** matplotlib 미설치로 `no-run`입니다.
+17장의 `train_test_split`은 데이터를 한 번만 나눕니다. 운 나쁜 분할이면 성능이 왜곡됩니다. **교차검증(cross-validation)**은 분할을 여러 번 바꿔 평균 내어 이 불안정을 줄입니다. AUC·임계값 조정은 정확도 하나로는 안 보이는 분류기의 실체를 드러냅니다. 계산은 sklearn, 시각화는 matplotlib으로 수행합니다.
 
 ```python
 import numpy as np
@@ -85,11 +85,12 @@ print(fpr.min() == 0.0)
 
 > ⚠️ **함정**: `predict_proba`는 (표본 수 × 클래스 수) 2차원 배열을 반환합니다. 양성 클래스 확률만 쓰려면 `[:, 1]`로 두 번째 열을 골라야 합니다. `predict`(0/1 라벨)를 `roc_auc_score`에 넣으면 곡선이 계단이 되어 AUC가 왜곡됩니다.
 
-시각화는 matplotlib이 필요해 아래는 `no-run`입니다. 설치 시 `pip install matplotlib`.
+ROC 곡선을 그려 봅니다. matplotlib이 필요합니다(미설치 시 `pip install matplotlib`).
 
-```python no-run
+```python
 import matplotlib.pyplot as plt
 
+plt.figure()
 plt.plot(fpr, tpr, label=f"AUC = {auc:.2f}")
 plt.plot([0, 1], [0, 1], "--")   # 무작위 분류기 기준선
 plt.xlabel("False Positive Rate")

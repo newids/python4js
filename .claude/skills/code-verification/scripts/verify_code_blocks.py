@@ -129,21 +129,51 @@ def collect_targets(args: list[str]) -> list[Path]:
     return targets
 
 
+def report_file(path: Path) -> bool:
+    """Run one file in-process and print its report. Returns True on failure."""
+    rep = run_file(path)
+    c = rep.counts()
+    summary = " / ".join(f"{v} {k}" for k, v in sorted(c.items())) or "no python blocks"
+    print(f"\n## {path.name} — {summary}")
+    failed = False
+    for r in rep.results:
+        if r.status != "PASS":
+            print(f"| {r.block.index} | {r.status} | 블록 {r.block.index} (md {r.block.line}행): {r.detail} |")
+        if r.status in ("FAIL", "OUTPUT_MISMATCH"):
+            failed = True
+    return failed
+
+
+# Native-library state (matplotlib/OpenMP vs TensorFlow threadpools on macOS)
+# leaks across files when they share one interpreter and can deadlock `fit`.
+# Multi-file runs therefore isolate each file in its own subprocess.
+PER_FILE_TIMEOUT_SEC = 300
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(__doc__, file=sys.stderr)
         return 2
+    targets = collect_targets(sys.argv[1:])
+    if len(targets) == 1:
+        return 1 if report_file(targets[0]) else 0
+
+    import subprocess
     failed = False
-    for path in collect_targets(sys.argv[1:]):
-        rep = run_file(path)
-        c = rep.counts()
-        summary = " / ".join(f"{v} {k}" for k, v in sorted(c.items())) or "no python blocks"
-        print(f"\n## {path.name} — {summary}")
-        for r in rep.results:
-            if r.status != "PASS":
-                print(f"| {r.block.index} | {r.status} | 블록 {r.block.index} (md {r.block.line}행): {r.detail} |")
-            if r.status in ("FAIL", "OUTPUT_MISMATCH"):
+    for path in targets:
+        try:
+            r = subprocess.run(
+                [sys.executable, __file__, str(path)],
+                capture_output=True, text=True, timeout=PER_FILE_TIMEOUT_SEC)
+            sys.stdout.write(r.stdout)
+            if r.returncode == 1:
                 failed = True
+            elif r.returncode not in (0, 1):
+                print(f"\n## {path.name} — runner error (exit {r.returncode})\n{r.stderr.strip()[-500:]}")
+                failed = True
+        except subprocess.TimeoutExpired:
+            print(f"\n## {path.name} — TIMEOUT (>{PER_FILE_TIMEOUT_SEC}s, 파일 격리 실행)")
+            failed = True
     return 1 if failed else 0
 
 
