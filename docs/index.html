@@ -2398,20 +2398,25 @@ print(top_feature &gt;= 0)
 # 출력: True</code></pre>
 <blockquote class="callout-warn">⚠️ <strong>JS 함정</strong>: <code>feature_importances_</code>는 끝에 언더스코어가 붙습니다. sklearn 관례상 <strong>학습 후 생성된 속성</strong>에는 <code>_</code>가 붙습니다(<code>coef_</code>, <code>classes_</code>도 동일). <code>fit</code> 전에 접근하면 에러가 나므로, JS에서 초기화 전 프로퍼티를 읽는 실수와 같은 함정입니다.</blockquote>
 <h2>20.5 XGBoost·LightGBM</h2>
-<p>XGBoost와 LightGBM은 부스팅을 고도로 최적화한 별도 라이브러리로, 캐글·실무에서 표준처럼 쓰입니다. 이 실행 환경에는 미설치이므로 아래는 <code>no-run</code>입니다. 설치는 <code>pip install xgboost lightgbm</code>.</p>
+<p>XGBoost와 LightGBM은 부스팅을 고도로 최적화한 별도 라이브러리로, 캐글·실무에서 표준처럼 쓰입니다. 설치는 <code>pip install xgboost lightgbm</code>입니다.</p>
+<blockquote class="callout"><strong>⚙️ 설치 팁</strong>: 두 라이브러리는 OpenMP 런타임에 의존합니다. macOS에서 <code>Library not loaded: libomp</code> 오류가 나면 <code>brew install libomp</code>로 해결하세요(Linux·Windows 휠에는 대개 포함).</blockquote>
 <p>API는 sklearn과 호환되게 설계되어 <code>fit</code>/<code>predict</code>/<code>feature_importances_</code>를 그대로 씁니다. 즉 17장의 estimator 인터페이스만 알면 라이브러리를 갈아끼우기만 하면 됩니다.</p>
 <pre class="lang-python"><code>from xgboost import XGBClassifier
 
-xgb = XGBClassifier(n_estimators=100, learning_rate=0.1,
+xgb = XGBClassifier(n_estimators=30, learning_rate=0.1,
                     max_depth=3, random_state=42)
 xgb.fit(X_train, y_train)
 pred = xgb.predict(X_test)
-print(xgb.feature_importances_)   # sklearn과 동일한 인터페이스</code></pre>
+print(xgb.feature_importances_.shape)   # 특성 수만큼, sklearn과 동일한 인터페이스
+# 출력: (8,)</code></pre>
 <pre class="lang-python"><code>from lightgbm import LGBMClassifier
 
-lgbm = LGBMClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+lgbm = LGBMClassifier(n_estimators=30, learning_rate=0.1,
+                      random_state=42, verbose=-1)   # verbose=-1: 학습 로그 억제
 lgbm.fit(X_train, y_train)
-pred = lgbm.predict(X_test)</code></pre>
+pred = lgbm.predict(X_test)
+print(pred.shape)
+# 출력: (90,)</code></pre>
 <blockquote class="callout-aice">🎯 <strong>AICE (출제 이력 불확실)</strong>: XGBoost·LightGBM의 AICE 실기 등장 여부는 <strong>회차별 편차가 있어 공식 범위상 확실하지 않습니다</strong>. 등장하더라도 위처럼 sklearn과 같은 <code>fit</code>/<code>predict</code> 형태이므로, sklearn 앙상블(RandomForest·GradientBoosting)을 확실히 익히면 전이가 쉽습니다. 시험 대비 우선순위는 sklearn 계열에 두세요.</blockquote>
 <h2>연습문제</h2>
 <p><strong>Q1.</strong> 트리 100개짜리 RandomForest 분류기를 학습하도록 빈칸을 채우세요.</p>

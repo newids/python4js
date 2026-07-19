@@ -96,26 +96,32 @@ print(top_feature >= 0)
 
 ## 20.5 XGBoost·LightGBM
 
-XGBoost와 LightGBM은 부스팅을 고도로 최적화한 별도 라이브러리로, 캐글·실무에서 표준처럼 쓰입니다. 이 실행 환경에는 미설치이므로 아래는 `no-run`입니다. 설치는 `pip install xgboost lightgbm`.
+XGBoost와 LightGBM은 부스팅을 고도로 최적화한 별도 라이브러리로, 캐글·실무에서 표준처럼 쓰입니다. 설치는 `pip install xgboost lightgbm`입니다.
+
+> **⚙️ 설치 팁**: 두 라이브러리는 OpenMP 런타임에 의존합니다. macOS에서 `Library not loaded: libomp` 오류가 나면 `brew install libomp`로 해결하세요(Linux·Windows 휠에는 대개 포함).
 
 API는 sklearn과 호환되게 설계되어 `fit`/`predict`/`feature_importances_`를 그대로 씁니다. 즉 17장의 estimator 인터페이스만 알면 라이브러리를 갈아끼우기만 하면 됩니다.
 
-```python no-run
+```python
 from xgboost import XGBClassifier
 
-xgb = XGBClassifier(n_estimators=100, learning_rate=0.1,
+xgb = XGBClassifier(n_estimators=30, learning_rate=0.1,
                     max_depth=3, random_state=42)
 xgb.fit(X_train, y_train)
 pred = xgb.predict(X_test)
-print(xgb.feature_importances_)   # sklearn과 동일한 인터페이스
+print(xgb.feature_importances_.shape)   # 특성 수만큼, sklearn과 동일한 인터페이스
+# 출력: (8,)
 ```
 
-```python no-run
+```python
 from lightgbm import LGBMClassifier
 
-lgbm = LGBMClassifier(n_estimators=100, learning_rate=0.1, random_state=42)
+lgbm = LGBMClassifier(n_estimators=30, learning_rate=0.1,
+                      random_state=42, verbose=-1)   # verbose=-1: 학습 로그 억제
 lgbm.fit(X_train, y_train)
 pred = lgbm.predict(X_test)
+print(pred.shape)
+# 출력: (90,)
 ```
 
 > 🎯 **AICE (출제 이력 불확실)**: XGBoost·LightGBM의 AICE 실기 등장 여부는 **회차별 편차가 있어 공식 범위상 확실하지 않습니다**. 등장하더라도 위처럼 sklearn과 같은 `fit`/`predict` 형태이므로, sklearn 앙상블(RandomForest·GradientBoosting)을 확실히 익히면 전이가 쉽습니다. 시험 대비 우선순위는 sklearn 계열에 두세요.
