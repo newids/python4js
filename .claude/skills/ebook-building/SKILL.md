@@ -40,3 +40,9 @@ python3 .claude/skills/ebook-building/scripts/build_ebook.py \
 - 파일 하나로 열리는지 (외부 CSS/JS/폰트 URL 참조가 없어야 함 — CDN 참조 금지)
 
 콘텐츠 결함(오탈자·깨진 표)을 발견하면 직접 고치지 말고 chapter-writer에게 보고한다.
+
+## 배포 (GitHub Pages)
+
+이 책은 GitHub Pages로 배포된다: https://newids.github.io/python4js/ (저장소 `newids/python4js`, `main` 브랜치 `/docs` 폴더 서빙).
+
+**재빌드 후 반드시** `dist/python4js-ebook.html`을 `docs/index.html`로 복사하고 커밋·푸시해야 라이브 사이트에 반영된다 — dist/만 갱신하면 배포본은 구버전으로 남는다. 푸시는 리더(오케스트레이터)가 사용자 확인 후 수행한다.

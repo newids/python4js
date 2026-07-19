@@ -6,6 +6,8 @@
 
 **트리거:** e-book 생성·수정·재실행, 목차/챕터/코드 검증/QA/빌드 관련 작업 요청 시 `python4js-ebook-orchestrator` 스킬을 사용하라. 단순 질문(Python 문법 질문 등)은 직접 응답 가능.
 
+**배포:** https://newids.github.io/python4js/ — GitHub `newids/python4js`, Pages는 `main:/docs` 서빙. 재빌드 시 `dist/python4js-ebook.html` → `docs/index.html` 복사 후 푸시 필요 (ebook-building 스킬의 배포 섹션 참조).
+
 **변경 이력:**
 | 날짜 | 변경 내용 | 대상 | 사유 |
 |------|----------|------|------|
