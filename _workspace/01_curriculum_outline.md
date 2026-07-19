@@ -2,8 +2,9 @@
 
 > **대상 독자**: JavaScript 숙련(시니어) 개발자. JS 개념 자체는 이미 안다는 전제하에, "Python은 어떻게 다른가"에만 지면을 쓴다.
 > **목표**: AICE **Associate + Professional** 두 트랙 실기를 최단 경로로 통과할 수 있는 Python 문법·데이터 핸들링·ML/DL 역량 습득.
-> **총 챕터 수**: 24개 (Part 1: 12 / Part 2: 6 / Part 3: 6) + Appendix 3개
-> **예상 학습 시간**: 약 16~20시간 (챕터당 30~60분 기준)
+<!-- revised: ch00 추가 (사용자 요청) -->
+> **총 챕터 수**: 25개 (Part 1: 13(ch00 포함) / Part 2: 6 / Part 3: 6) + Appendix 3개
+> **예상 학습 시간**: 약 16.5~20.5시간 (챕터당 30~60분 기준, ch00 안내 챕터 약 20~30분)
 > **산출물**: `dist/python4js-ebook.html` (단일 자기완결형 HTML)
 
 ## 범례
@@ -20,6 +21,7 @@
 
 | 번호 | 제목 | 학습 목표 | 개념 목록 | JS 대응 | AICE 연관도 | 선수 챕터 | 비고 (슬러그) |
 |------|------|----------|----------|---------|------------|----------|------|
+| 00 | 이 책을 읽기 전에 | 책의 목적·구성·학습법을 파악하고 자신의 트랙(Associate/Professional)에 맞는 학습 경로를 잡는다 | 책의 목적, AICE 소개와 트랙 구분(A/P), 대상 독자 정의(시니어 JS 개발자), 책의 구성(Part 1~3 + 부록), 학습 방법·권장 경로(상세 로드맵은 부록 C 참조), 실습 환경 안내(Jupyter·설치 패키지) | (해당 없음 — JS 개발자 관점 안내로 대체) | A/P 공통 안내(-) | - | <!-- revised: ch00 추가 (사용자 요청) --> 프런트매터 — 비교코드·연습문제 템플릿 면제 가능. 개요/방법론 담당(경로 그래프는 부록 C와 역할 분리). (ch00_about) |
 | 01 | 개발 환경과 실행 모델 | Python 실행/패키지 생태계를 node 경험에 매핑하고 Jupyter 셀 실행 모델을 이해한다 | python/pip/venv, REPL, Jupyter 노트북 셀 실행, import 경로, 스크립트 vs 모듈 | node/npm/nvm, REPL, package.json | A상 / P상 | - | AICE는 Jupyter 환경 실기. (ch01_environment) |
 | 02 | 변수·타입·연산자 | 동적 타이핑 공통점을 확인하고 `==`/`is`·나눗셈·truthiness 차이를 체득한다 | 동적 타이핑, 할당(상수 관례), `==` vs `is`, `is None`, `/` vs `//`, truthiness 차이 | let/const, `===`, `==null`, `/` | A상 / P상 | 01 | ⚠️ truthiness·`is None` JS 함정 집중. (ch02_variables_types) |
 | 03 | 문자열과 포매팅 | f-string과 주요 문자열 메서드를 JS 대응으로 습득한다 | f-string(포맷 스펙 `:.2f`), 문자열 메서드(split/join/strip/replace), 슬라이싱 맛보기 | 템플릿 리터럴, String 메서드 | A중 / P중 | 02 | (ch03_strings) |

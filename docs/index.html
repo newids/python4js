@@ -51,7 +51,8 @@ border-bottom:1px solid var(--border)}main{margin-left:0}}
 </style>
 </head>
 <body>
-<nav aria-label="목차"><h1>Python for JS Developers — AICE Associate &amp; Professional 대비</h1><a href="#ch01_environment">Chapter 01. 개발 환경과 실행 모델</a>
+<nav aria-label="목차"><h1>Python for JS Developers — AICE Associate &amp; Professional 대비</h1><a href="#ch00_about">Chapter 00. 이 책을 읽기 전에</a>
+<a href="#ch01_environment">Chapter 01. 개발 환경과 실행 모델</a>
 <a href="#ch02_variables_types">Chapter 02. 변수·타입·연산자</a>
 <a href="#ch03_strings">Chapter 03. 문자열과 포매팅</a>
 <a href="#ch04_collections">Chapter 04. 컬렉션: list·dict·set·tuple</a>
@@ -78,7 +79,51 @@ border-bottom:1px solid var(--border)}main{margin-left:0}}
 <a href="#appendix_a_cheatsheet">Appendix A. JS → Python 치트시트</a>
 <a href="#appendix_b_exam_tips">Appendix B. AICE 실기 팁과 자주 하는 실수</a>
 <a href="#appendix_c_roadmap">Appendix C. Associate vs Professional 로드맵</a></nav>
-<main><article id="ch01_environment"><h1>Chapter 01. 개발 환경과 실행 모델</h1>
+<main><article id="ch00_about"><h1>Chapter 00. 이 책을 읽기 전에</h1>
+<p>이 책은 JavaScript에 능숙한 개발자가 <strong>Python을 최단 경로로 익혀 AICE 자격증 실기를 통과</strong>하도록 돕습니다. 문법을 처음부터 가르치지 않습니다 — 당신이 이미 아는 JS 개념 위에 Python의 차이점만 얹습니다.</p>
+<h2>0.1 이 책의 목적</h2>
+<p>시중의 Python 입문서는 변수·반복문·함수를 백지에서 설명합니다. 시니어 JS 개발자에게 그 지면은 낭비입니다. 이 책은 "map/filter/클로저/프로토타입을 설명 없이 이해하는 독자"를 전제로, <strong>JS와 다른 지점</strong>과 <strong>Python 고유 관용구</strong>에만 집중합니다.</p>
+<p>목표는 두 가지입니다. 첫째, pandas·scikit-learn·Keras 코드를 읽고 쓸 수 있는 Python 문법 토대를 세웁니다. 둘째, 그 토대 위에서 AICE 실기 파이프라인(EDA → 전처리 → 모델링 → 평가)을 손에 익힙니다.</p>
+<h2>0.2 AICE 소개와 트랙 구분</h2>
+<p>AICE(AI Certification for Everyone)는 KT가 주관하는 국내 AI 활용 능력 자격증입니다. 여러 등급 중 이 책이 겨냥하는 것은 Python 실기 비중이 높은 두 트랙입니다.</p>
+<table><thead><tr><th>트랙</th><th>대상</th><th>이 책의 커버 범위</th></tr></thead><tbody><tr><td><strong>Associate (A)</strong></td><td>실무자·개발자</td><td>1~18장 (Part 1 + Part 2)</td></tr><tr><td><strong>Professional (P)</strong></td><td>AI 개발자</td><td>1~24장 (전체)</td></tr></tbody></table>
+<p>두 트랙 모두 Jupyter 환경에서 <strong>빈 셀에 코드를 채워 실행</strong>시키는 실기 시험입니다. 각 장에는 해당 문법이 시험에 어떻게 나오는지 알려주는 🎯 AICE 콜아웃이 있습니다.</p>
+<h2>0.3 대상 독자</h2>
+<p>이 책은 다음 독자를 위해 쓰였습니다.</p>
+<ul><li>JavaScript(ES2020+)를 실무에서 자유롭게 쓰는 시니어 개발자</li><li>Python은 거의 처음이거나, 문법을 단편적으로만 아는 상태</li><li>AICE Associate 또는 Professional 취득이 목표인 분</li></ul>
+<p>만약 프로그래밍 자체가 처음이라면 이 책은 맞지 않습니다. 이 책의 모든 설명은 "JS에서는 이랬는데 Python에서는?"이라는 질문에 답하는 방식으로 전개됩니다.</p>
+<h2>0.4 이 책의 구성</h2>
+<p>본문 24개 장과 부록 3개로 이루어집니다.</p>
+<table><thead><tr><th>파트</th><th>장</th><th>내용</th></tr></thead><tbody><tr><td><strong>Part 1</strong></td><td>1~12장</td><td>Python 문법 — JS 개발자의 눈으로</td></tr><tr><td><strong>Part 2</strong></td><td>13~18장</td><td>AICE Associate 실전 — 데이터 핸들링과 모델링</td></tr><tr><td><strong>Part 3</strong></td><td>19~24장</td><td>AICE Professional 심화 — 고급 ML·딥러닝</td></tr><tr><td><strong>부록 A</strong></td><td>—</td><td>JS → Python 치트시트</td></tr><tr><td><strong>부록 B</strong></td><td>—</td><td>AICE 실기 팁과 자주 하는 실수</td></tr><tr><td><strong>부록 C</strong></td><td>—</td><td>Associate vs Professional 로드맵</td></tr></tbody></table>
+<p>Part 1은 JS 대응이 명확한 개념을 빠르게 통과하고, Python 고유 관용구(컴프리헨션·슬라이싱·언패킹)와 JS 습관이 역효과를 내는 함정(truthiness·가변 기본값·늦은 바인딩)에 분량을 집중합니다. Part 2·3은 JS에 대응이 없는 벡터화 사고방식이 최대 전환점입니다.</p>
+<h2>0.5 이 책의 특징 — 읽는 방법</h2>
+<p>이 책에는 독자를 돕는 몇 가지 고유한 장치가 있습니다. 미리 알아두면 학습 효율이 올라갑니다.</p>
+<p><strong>JS ↔ Python 나란히 비교.</strong> 새 개념은 항상 두 언어를 나란히 놓은 표로 시작합니다. 왼쪽 JS는 이미 아는 내용이니, 오른쪽 Python이 어떻게 다른지만 확인하면 됩니다.</p>
+<p><strong>두 종류의 함정 콜아웃.</strong> 위험 지점은 눈에 띄게 표시하며, 성격에 따라 라벨을 둘로 나눕니다.</p>
+<blockquote class="callout-warn">⚠️ <strong>JS 함정</strong>: JS 습관이나 문법 유추가 잘못된 Python 코드로 이어지는 지점입니다(주로 Part 1). 예를 들어 빈 리스트 <code>[]</code>는 JS에서 truthy였지만 Python에서는 falsy입니다.</blockquote>
+<blockquote class="callout-warn">⚠️ <strong>함정</strong>: JS와는 무관한, Python이나 라이브러리 자체의 함정입니다(주로 Part 2·3). 예를 들어 pandas에서 <code>NaN == NaN</code>이 <code>False</code>인 것은 JS 경험과 상관없이 알아야 하는 지점입니다.</blockquote>
+<p>시간이 급하다면 <code>⚠️ <strong>JS 함정</strong></code>만 골라 읽어도 JS→Python 전환 비용을 최소화할 수 있습니다. <code>⚠️ <strong>함정</strong></code>은 해당 라이브러리를 다루는 장에서 확인하면 됩니다.</p>
+<p><strong>AICE 콜아웃.</strong> 해당 문법이 시험에 등장하는 형태를 짚어줍니다.</p>
+<blockquote class="callout-aice">🎯 <strong>AICE</strong>: 이 문법이 실기 빈칸 채우기 문제에서 어떤 형태로 나오는지 알려줍니다.</blockquote>
+<p><strong>빈칸 채우기형 연습문제.</strong> 각 장 끝에는 AICE 실기 형식을 본뜬 빈칸(<code>____</code>) 채우기 문제가 있습니다. 정답은 접힌 <code>&lt;details&gt;</code> 블록 안에 있으니, 먼저 풀어본 뒤 펼쳐 확인하세요.</p>
+<p><strong>모든 실행 예제는 실제로 검증되었습니다.</strong> 본문의 실행 가능한 Python 코드 블록(총 221개)은 실제 인터프리터로 실행해 출력까지 대조했습니다. <code># 출력:</code> 주석은 진짜 실행 결과입니다. 복사해 그대로 돌려보아도 동작합니다. 단, 설치가 필요한 딥러닝·시각화 예제 등 일부는 실행 대신 읽기용으로 표시(<code>no-run</code>)했습니다.</p>
+<h2>0.6 실습 환경 안내</h2>
+<p><strong>Python 3.13</strong> 기준으로 작성했습니다. AICE 실기가 Jupyter 노트북 환경이므로, 학습도 <strong>Jupyter</strong>(JupyterLab 또는 노트북)에서 진행하기를 권장합니다. 셀 단위 실행 모델은 1장에서 자세히 다룹니다.</p>
+<p>패키지는 다음과 같이 나뉩니다.</p>
+<ul><li><strong>필수</strong>: numpy, pandas, scikit-learn (Part 1~3의 대부분 예제)</li><li><strong>시각화·딥러닝 장</strong>: matplotlib, seaborn, tensorflow (16·18·23장 등)</li><li><strong>선택</strong>: xgboost, lightgbm (20장 앙상블 일부)</li></ul>
+<p>가상환경을 만든 뒤 아래처럼 설치합니다(가상환경 개념은 1장 참조).</p>
+<pre class="lang-text"><code>python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install numpy pandas scikit-learn
+pip install matplotlib seaborn tensorflow   # 시각화·딥러닝 장용
+pip install xgboost lightgbm                # 선택 (20장 일부)</code></pre>
+<p>설치 없이 바로 시작하려면 브라우저에서 도는 Google Colab을 써도 됩니다. numpy·pandas·scikit-learn·tensorflow가 기본 제공되어 별도 설치가 거의 필요 없습니다.</p>
+<h2>0.7 트랙별 학습 방법</h2>
+<p><strong>Associate 목표라면 1~18장</strong>이면 충분합니다. <strong>Professional 목표라면 1~24장</strong> 전체를 이수합니다. 두 트랙 모두 Part 1 문법이 토대이므로 건너뛰지 마세요.</p>
+<p>JS 개발자에게 권하는 접근법은 하나입니다 — <strong>아는 것은 대응표만 훑고, 함정에 시간을 쓰세요.</strong> JS와 거의 같은 부분(문자열 메서드, 모듈 import, 예외 처리)은 나란히 비교표만 확인하고 넘어가면 됩니다. 대신 ⚠️ 콜아웃이 붙은 지점(truthiness·<code>is None</code>·슬라이싱·삼항 어순·<code>self</code>·가변 기본값)은 반드시 예제를 직접 실행하며 몸에 익히세요. 시험에서 실점하는 곳은 몰라서가 아니라 JS 습관이 튀어나오는 곳입니다.</p>
+<p>각 장의 선수 관계와 트랙별 최단 경로, 챕터 의존 그래프는 <strong>부록 C</strong>에 정리해 두었습니다. 학습 순서를 짤 때 부록 C를 지도로 삼으세요.</p>
+<p>이제 1장에서 Python 실행 환경을 node 경험에 매핑하는 것으로 시작합니다.</p></article>
+<article id="ch01_environment"><h1>Chapter 01. 개발 환경과 실행 모델</h1>
 <blockquote class="callout"><strong>학습 목표</strong><br>- <code>python</code>/<code>pip</code>/<code>venv</code>를 node/npm/nvm 경험에 매핑해 설명할 수 있다<br>- REPL과 스크립트 실행, 그리고 Jupyter 노트북 셀 실행 모델의 차이를 이해할 수 있다<br>- import 경로가 어떻게 해석되는지, 스크립트와 모듈이 어떻게 다른지 구분할 수 있다</blockquote>
 <h2>1.1 런타임과 패키지 매니저 — node/npm의 대응물</h2>
 <p>JS에서 <code>node app.js</code>로 스크립트를 돌리고 <code>npm install</code>로 의존성을 받던 흐름을 그대로 옮겨봅니다. 이름만 바뀔 뿐 역할은 거의 1:1로 대응합니다.</p>
