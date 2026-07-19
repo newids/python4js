@@ -45,4 +45,9 @@ python3 .claude/skills/ebook-building/scripts/build_ebook.py \
 
 이 책은 GitHub Pages로 배포된다: https://newids.github.io/python4js/ (저장소 `newids/python4js`, `main` 브랜치 `/docs` 폴더 서빙).
 
-**재빌드 후 반드시** `dist/python4js-ebook.html`을 `docs/index.html`로 복사하고 커밋·푸시해야 라이브 사이트에 반영된다 — dist/만 갱신하면 배포본은 구버전으로 남는다. 푸시는 리더(오케스트레이터)가 사용자 확인 후 수행한다.
+**재빌드 후 반드시** 두 가지 파생 산출물을 함께 갱신하고 커밋·푸시해야 한다 — dist/만 갱신하면 배포본은 구버전으로 남는다:
+
+1. `dist/python4js-ebook.html` → `docs/index.html` 복사 (Pages 라이브 반영)
+2. `_workspace/02_chapters/*.md` → `chapters/` 동기화 (GitHub 챕터별 열람용 파생 복사본 — 챕터 추가/삭제 시 README.md 목차도 갱신)
+
+`chapters/`와 README 목차는 원본이 아니라 파생물이다 — 직접 편집하지 말고 항상 `_workspace/02_chapters/`에서 동기화한다. 푸시는 리더(오케스트레이터)가 사용자 확인 후 수행한다.
